@@ -1,2 +1,2 @@
-# micro_diffusion
-Repo is required for the code of our research paper on micro-budget training of large scale diffusion model.
+# Training large-scale diffusion models from scratch on a micro-budget
+Our training code and model checkpoints will be released soon!
