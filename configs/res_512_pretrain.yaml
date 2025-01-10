@@ -1,0 +1,127 @@
+exp_name: MicroDiTXL_mask_75_res_512_pretrain
+seed: 18
+algorithms:
+  ema:
+    _target_: diffusion.algorithms.ema.EMA
+    half_life: null
+    smoothing: 0.99975
+    update_interval: 1ba
+    ema_start: 25000ba
+  low_precision_layernorm:
+   precision: amp_bf16
+  gradient_clipping:
+    clipping_type: norm
+    clip_norm: 0.5
+model:
+  _target_: micro_diffusion.models.model.create_latent_diffusion
+  vae_name: stabilityai/stable-diffusion-xl-base-1.0
+  text_encoder_name: openclip:hf-hub:apple/DFN5B-CLIP-ViT-H-14-378
+  dit_arch: MicroDiT_XL_2
+  precomputed_latents: true
+  in_channels: 4
+  pos_interp_scale: 2.0
+  dtype: 'bfloat16'
+  latent_res: 64
+  p_mean: 0
+  p_std: 0.6
+  train_mask_ratio: 0.75
+dataset:
+  image_size: 512 # 8 * latent_res
+  train_batch_size: 2048
+  eval_batch_size: 1024
+  cap_drop_prob: 0.1
+  train:
+    _target_: micro_diffusion.datasets.latents_loader.build_streaming_latents_dataloader
+    datadir: 
+      - ./datasets/sa1b/mds_latents_sdxl1_dfnclipH14/
+      - ./datasets/cc12m/mds_minres512_latents_sdxl1_dfnclipH14/
+      - ./datasets/textcaps/mds_latents_sdxl1_dfnclipH14/
+      - ./datasets/jdb/mds_latents_sdxl1_dfnclipH14/train/
+    drop_last: true
+    shuffle: true
+    prefetch_factor: 2
+    num_workers: 2
+    persistent_workers: true
+    pin_memory: true
+  eval:
+    _target_: micro_diffusion.datasets.latents_loader.build_streaming_latents_dataloader
+    datadir: ./datasets/coco2014/mds_latents_sdxl1_dfnclipH14/
+    drop_last: false
+    shuffle: true
+    prefetch_factor: 2
+    num_workers: 2
+    persistent_workers: true
+    pin_memory: true
+optimizer:
+  _target_: torch.optim.AdamW
+  lr: 8e-5
+  weight_decay: 0.1
+  eps: 1.0e-8
+  betas:
+    - 0.9
+    - 0.999
+scheduler:
+  _target_: composer.optim.ConstantWithWarmupScheduler
+  t_warmup: 500ba
+  alpha: 1.0
+logger:
+  progress:
+    _target_: composer.loggers.TensorboardLogger
+  # wandb:
+  #   _target_: composer.loggers.wandb_logger.WandBLogger
+  #   name: ${exp_name}
+  #   project: microdit_training #insert wandb project name
+  #   group: ${exp_name}
+callbacks:
+  speed_monitor:
+    _target_: composer.callbacks.speed_monitor.SpeedMonitor
+    window_size: 3
+  lr_monitor:
+    _target_: composer.callbacks.lr_monitor.LRMonitor
+  runtime_estimator:
+    _target_: composer.callbacks.runtime_estimator.RuntimeEstimator
+  optimizer_monitor:
+    _target_: composer.callbacks.OptimizerMonitor
+  image_monitor:
+    _target_: micro_diffusion.models.callbacks.LogDiffusionImages
+    prompts:
+      - a photograph of an astronaut riding a horse
+      - An astronaut riding a pig, highly realistic dslr photo, cinematic shot
+      - Panda mad scientist mixing sparkling chemicals, artstation
+      - a close-up of a fire spitting dragon, cinematic shot.
+      - A small cactus with a happy face in the Sahara desert
+      - Pirate ship trapped in a cosmic maelstrom nebula, rendered in cosmic beach whirlpool engine, volumetric lighting, spectacular, ambient lights, light pollution, cinematic atmosphere, art nouveau style, illustration art artwork by SenseiJaye, intricate detail.
+      - A dog that has been meditating all the time
+      - A Pikachu with an angry expression and red eyes, with lightning around it, hyper realistic style
+      - A worker that looks like a mixture of cow and horse is working hard to type code
+      - A capybara made of lego sitting in a realistic, natural field
+      - A grand piano with a white bench.
+      - In a fantastical setting, a highly detailed furry humanoid skunk with piercing eyes confidently poses in a medium shot, wearing an animal hide jacket. The artist has masterfully rendered the character in digital art, capturing the intricate details of fur and clothing texture.
+      - A illustration from a graphic novel. A bustling city street under the shine of a full moon. The sidewalks bustling with pedestrians enjoying the nightlife. At the corner stall, a young woman with fiery red hair, dressed in a signature velvet cloak, is haggling with the grumpy old vendor. the grumpy vendor, a tall, sophisticated man is wearing a sharp suit, sports a noteworthy moustache is animatedly conversing on his steampunk telephone.
+      - A fierce garden gnome warrior, clad in armor crafted from leaves and bark, brandishes a tiny sword and shield. He stands valiantly on a rock amidst a blooming garden, surrounded by colorful flowers and towering plants. A determined expression is painted on his face, ready to defend his garden kingdom.
+      - A giant cobra snake made from corn
+      - A green sign that says "Very Deep Learning" and is at the edge of the Grand Canyon. Puffy white clouds are in the sky
+    guidance_scale: 5
+    sampling_steps: 30
+    seed: ${seed}
+  nan_catcher:
+    _target_: micro_diffusion.models.callbacks.NaNCatcher
+trainer:
+  _target_: composer.Trainer
+  device: gpu
+  max_duration: 50000ba
+  eval_interval: 2500ba
+  save_interval: 2500ba
+  save_num_checkpoints_to_keep: 1
+  device_train_microbatch_size: 32
+  run_name: ${exp_name}
+  seed: ${seed}
+  save_folder: ./trained_models/${exp_name}/
+  load_path: path_to_final_ckpt_from_res_256_finetune_run
+  load_weights_only: true
+  load_strict_model_weights: false
+  load_ignore_keys: ["state/model/unet.pos_embed"]
+  save_overwrite: true
+  autoresume: false
+  fsdp_config:
+    sharding_strategy: "SHARD_GRAD_OP"
