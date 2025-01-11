@@ -87,7 +87,6 @@ def write_df(args: ArgumentParser, df: pd.DataFrame, idx: int):
             }
             writer.write(mds_sample)
             total += 1
-
         except Exception as e:
             print(f"Something went wrong in reading caption, skipping writing this sample. Error: {e}")
 
@@ -104,7 +103,7 @@ def main():
     )
     # Splitting metadata in num_processes
     metadata = np.array_split(metadata, args.num_proc)
-
+    
     pool_args = [(args, df_sub, i) for i, df_sub in enumerate(metadata)]
     with Pool(processes=args.num_proc) as pool:
         pool.starmap(write_df, pool_args)

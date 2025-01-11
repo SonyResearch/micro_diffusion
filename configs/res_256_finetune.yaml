@@ -27,11 +27,11 @@ dataset:
   train:
     _target_: micro_diffusion.datasets.latents_loader.build_streaming_latents_dataloader
     datadir: 
-      - ./datasets/sa1b/mds_latents_sdxl1_dfnclipH14/
-      - ./datasets/cc12m/mds_latents_sdxl1_dfnclipH14/
-      - ./datasets/textcaps/mds_latents_sdxl1_dfnclipH14/
-      - ./datasets/jdb/mds_latents_sdxl1_dfnclipH14/train/
-      - ./datasets/diffdb/mds_latents_sdxl1_dfnclipH14/
+      - ./datadir/sa1b/mds_latents_sdxl1_dfnclipH14/
+      - ./datadir/cc12m/mds_latents_sdxl1_dfnclipH14/
+      - ./datadir/textcaps/mds_latents_sdxl1_dfnclipH14/
+      - ./datadir/jdb/mds_latents_sdxl1_dfnclipH14/train/
+      - ./datadir/diffdb/mds_latents_sdxl1_dfnclipH14/
     drop_last: true
     shuffle: true
     prefetch_factor: 2
@@ -40,7 +40,7 @@ dataset:
     pin_memory: true
   eval:
     _target_: micro_diffusion.datasets.latents_loader.build_streaming_latents_dataloader
-    datadir: ./datasets/coco2014/mds_latents_sdxl1_dfnclipH14/
+    datadir: ./datadir/coco2014/mds_latents_sdxl1_dfnclipH14/
     drop_last: false
     shuffle: true
     prefetch_factor: 2
@@ -117,3 +117,5 @@ trainer:
   autoresume: false
   fsdp_config:
     sharding_strategy: "SHARD_GRAD_OP"
+misc:
+  compile: true

@@ -49,7 +49,7 @@ def current_process_index() -> int:
     return p._identity[0] - 1
 
 
-def read_tar(path: str, path_out: str) -> Generator[Tuple[Image.Image, str]]:
+def read_tar(path: str, path_out: str) -> Generator[Tuple[Image.Image, str], None, None]:
     os.makedirs(path_out, exist_ok=False)
     with tarfile.open(path, 'r') as tar:
         tar.extractall(path_out)
@@ -62,7 +62,7 @@ def read_tar(path: str, path_out: str) -> Generator[Tuple[Image.Image, str]]:
             with open(t, 'r') as ct:
                 cap = ct.read()
             # assuming all files are in jpg
-            img = Image.open(t.strip('.txt') + '.jpg')
+            img = Image.open(t.replace('.txt', '.jpg'))
             yield img, cap
         except Exception as e:
             print(e)
@@ -80,11 +80,11 @@ def write_tar(tars: List[str], args: ArgumentParser):
         'caption': 'str'
     }
     
-    # create a writer per process
     # make sure that write_tar is only called once per process
     save_dir = os.path.join(args.local_mds_dir, str(current_process_index()))
     os.makedirs(save_dir, exist_ok=True)
     
+    # create a writer per process
     writer = MDSWriter(
         out=save_dir,
         columns=columns,

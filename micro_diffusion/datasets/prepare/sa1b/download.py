@@ -158,7 +158,6 @@ def main() -> None:
         "-C",
         cap_dir
     ], check=True)
-    return 
 
     try:
         url = ('https://scontent-sjc3-1.xx.fbcdn.net/m1/v/t6/'

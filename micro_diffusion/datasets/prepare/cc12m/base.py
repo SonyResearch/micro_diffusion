@@ -5,7 +5,7 @@ from torchvision import transforms
 from streaming import Stream, StreamingDataset
 
 from micro_diffusion.models.utils import UniversalTokenizer
-from micro_diffusion.models.captions import CaptionProcessor
+from micro_diffusion.datasets.captions import CaptionProcessor
 
 
 class StreamingCC12MDatasetForPreCompute(StreamingDataset):

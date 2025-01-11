@@ -18,7 +18,7 @@ pip install -e .
 
 ## Datasets Setup
 First, set up the necessary directories to store the datasets and training artifacts.
-```
+```bash
 ln -s path_to_dir_that_stores_data ./datadir
 ln -s path_to_dir_that_stores_trained_models ./trained_models
 ```
@@ -32,27 +32,27 @@ We progressively train the models from low resolution to high resolution. We fir
 
 
 ### Step-1: Pre-training at 256x256 image resolution with 75% patch masking
-```
+```bash
 composer train.py --config-path ./configs --config-name res_256_pretrain.yaml exp_name=MicroDiTXL_mask_75_res_256_pretrain model.train_mask_ratio=0.75
 ```
 
 ### Step-2: Finetuning at 256x256 image resolution with no patch masking
-```
+```bash
 composer train.py --config-path ./configs --config-name res_256_finetune.yaml exp_name=MicroDiTXL_mask_0_res_256_finetune model.train_mask_ratio=0.0 trainer.load_path=./trained_models/MicroDiTXL_mask_75_res_256_pretrain/latest-rank0.pt
 ```
 ### Step-3: Finetuning at 512x512 image resolution with 75% patch masking
-```
+```bash
 composer train.py --config-path ./configs --config-name res_512_pretrain.yaml exp_name=MicroDiTXL_mask_75_res_512_pretrain model.train_mask_ratio=0.75 trainer.load_path=./trained_models/MicroDiTXL_mask_0_res_256_finetune/latest-rank0.pt
 ```
 ### Step-4: Finetuning at 512x512 image resolution with no patch masking
-```
+```bash
 composer train.py --config-path ./configs --config-name res_512_finetune.yaml exp_name=MicroDiTXL_mask_0_res_512_finetune model.train_mask_ratio=0.0 trainer.load_path=./trained_models/MicroDiTXL_mask_75_res_512_pretrain/latest-rank0.pt
 ```
 
 Across all steps, we use a batch size of 2,048, apply center cropping, and do not horizontally flip the images.
 
 ## Pre-trained Model Checkpoints
-We release four pre-trained models. The table below provides download links and a description of each model.
+We release four pre-trained models ([HF](https://huggingface.co/VSehwag24/MicroDiT)). The table below provides download links and a description of each model.
 | Model Description | VAE (channels) | FID  | GenEval Score | Download |
 |------------------|-----|:------: |:------:|:---------------:|
 | MicroDiT_XL_2 trained on 22M real images  | SDXL-VAE (4 channel) | 12.72 | 0.46 | [link](https://huggingface.co/VSehwag24/MicroDiT/resolve/main/ckpts/dit_4_channel_22M_real_only_data.pt?download=true) |
@@ -65,7 +65,7 @@ All four models are trained with nearly identical training configurations and co
 
 ## Sampling
 Use the following straightforward steps to generate images from the final model at 512×512 resolution.
-```
+```python
 from micro_diffusion.models.model import create_latent_diffusion
 model = create_latent_diffusion(latent_res=64, in_channels=4, pos_interp_scale=2.0).to('cuda')
 model.load_state_dict(torch.load(final_ckpt_path_on_local_disk))
@@ -80,7 +80,7 @@ We would like to thank previous open-source efforts that we utilize in our code,
 The code and model weights are released under Apache 2.0 License. 
 
 ## BibTeX
-```bibtext
+```bibtex
 @article{Sehwag2024MicroDiT,
   title={Stretching Each Dollar: Diffusion Training from Scratch on a Micro-Budget},
   author={Sehwag, Vikash and Kong, Xianghao and Li, Jingtao and Spranger, Michael and Lyu, Lingjuan},

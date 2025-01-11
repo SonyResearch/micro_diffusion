@@ -76,12 +76,12 @@ def write_images(images_path: np.ndarray, args: ArgumentParser) -> None:
     for f in tqdm(images_path):
         if f.lower().endswith(('.png', '.jpg', '.jpeg')):
             try:
-                img = Image.open(os.path.join(args.images_dir, f))
+                img = Image.open(f)
                 w, h = img.size
                 # data format is (sa_433759.jpg -> sa_433759.txt)
                 cap_path = os.path.join(
                     args.captions_dir,
-                    os.path.split(f)[-1].split('.')[0] + '.txt'
+                    os.path.basename(f).split('.')[0] + '.txt'
                 )
                 cap = open(cap_path, 'r').read().strip()
                 

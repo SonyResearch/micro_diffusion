@@ -2,7 +2,7 @@
 
 train() {
    # 1: yaml_path, 2: yaml_name, $3: update_args
-   pkill -9 python; python -c 'import streaming; streaming.base.util.clean_stale_shared_memory()'
+   pkill -9 python; python -c 'import streaming; streaming.base.util.clean_stale_shared_memory()' # alternative hack: rm -rf /dev/shm/0000*
    rm -rf /tmp/streaming/*
    wait;
    sleep 3

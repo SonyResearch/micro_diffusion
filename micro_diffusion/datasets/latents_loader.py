@@ -66,7 +66,7 @@ class StreamingLatentsDataset(StreamingDataset):
                 .copy()
             ).reshape(-1, 64, 64)
 
-        out['caption'] = sample['caption']
+        # out['caption'] = sample['caption']
         return out
 
 

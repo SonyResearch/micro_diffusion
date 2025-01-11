@@ -14,7 +14,7 @@ setup(
         'open_clip_torch<=2.24.0',
         'easydict',
         'einops',
-        'mosaicml-streaming',
+        'mosaicml-streaming<=0.9.0',
         'torchmetrics',
         'mosaicml[tensorboard, wandb]<=0.24.1',
         'tqdm',
@@ -22,6 +22,7 @@ setup(
         'fastparquet',
         'omegaconf', 
         'datasets', 
-        'hydra-core'
+        'hydra-core',
+        'beautifulsoup4'
     ],
 )

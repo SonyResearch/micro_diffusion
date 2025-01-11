@@ -96,6 +96,10 @@ def train(cfg: DictConfig) -> None:
 
     scheduler = hydra.utils.instantiate(cfg.scheduler)
 
+    # disable online evals if using torch.compile
+    if cfg.misc.compile:
+        cfg.trainer.eval_interval = 0
+        
     trainer = hydra.utils.instantiate(
         cfg.trainer,
         train_dataloader=train_loader,
@@ -108,7 +112,7 @@ def train(cfg: DictConfig) -> None:
         callbacks=callbacks,
         precision='amp_bf16' if cfg.model['dtype'] == 'bfloat16' else 'amp_fp16',  # fp16 by default
         python_log_level='debug',
-        # compile_config={}  # 15% speedup on PT-2.3+Composer-0.22 # TODO: Uncomment it in final run
+        compile_config={} if cfg.misc.compile else None  # it enables torch.compile (~15% speedup)
     )
 
     # Ensure models are on correct device
