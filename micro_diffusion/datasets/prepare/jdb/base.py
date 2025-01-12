@@ -75,6 +75,7 @@ def build_streaming_jdb_precompute_dataloader(
                 ),
                 transforms.CenterCrop(resize),
                 transforms.ToTensor(),
+                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
             ])
         )
 

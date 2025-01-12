@@ -78,6 +78,7 @@ def build_streaming_sa1b_precompute_dataloader(
                 ),
                 transforms.CenterCrop(size),
                 transforms.ToTensor(),
+                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
             ])
         )
 

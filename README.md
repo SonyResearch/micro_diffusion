@@ -23,7 +23,7 @@ ln -s path_to_dir_that_stores_data ./datadir
 ln -s path_to_dir_that_stores_trained_models ./trained_models
 ```
 
-Next, download the training dataset by following [datasets.md](./micro_diffusion/datasets/datasets.md). It provides instructions on downloading and precomputing the image and caption latents for all five datasets used in the paper. As downloading and precomputing latents for entire datasets can be time-consuming, it supports downloading and using only a small (~1%) fraction of each dataset, instead of the full dataset. We strongly recommend working with this small subset for initial experimentation.
+Next, download the training dataset by following [datasets.md](./micro_diffusion/datasets/README.md). It provides instructions on downloading and precomputing the image and caption latents for all five datasets used in the paper. As downloading and precomputing latents for entire datasets can be time-consuming, it supports downloading and using only a small (~1%) fraction of each dataset, instead of the full dataset. We strongly recommend working with this small subset for initial experimentation.
 
 ## Training Stages for Micro-Budget Models
 We progressively train the models from low resolution to high resolution. We first train the model on 256×256 resolution images for 280K steps and then fine-tune the model for 55K steps on 512×512 resolution images. The estimated training time for the end-to-end model on an 8×H100 machine is 2.6 days. We provide the training configuration for each stage in the ./yamls/ directory.
@@ -55,12 +55,12 @@ Across all steps, we use a batch size of 2,048, apply center cropping, and do no
 We release four pre-trained models ([HF](https://huggingface.co/VSehwag24/MicroDiT)). The table below provides download links and a description of each model.
 | Model Description | VAE (channels) | FID  | GenEval Score | Download |
 |------------------|-----|:------: |:------:|:---------------:|
-| MicroDiT_XL_2 trained on 22M real images  | SDXL-VAE (4 channel) | 12.72 | 0.46 | [link](https://huggingface.co/VSehwag24/MicroDiT/resolve/main/ckpts/dit_4_channel_22M_real_only_data.pt?download=true) |
-| MicroDiT_XL_2 trained on 37M images (22M real, 15 synthetic) | SDXL-VAE (4 channel) | **12.66** | 0.46 | [link](https://huggingface.co/VSehwag24/MicroDiT/resolve/main/ckpts/dit_4_channel_37M_real_and_synthetic_data.pt?download=true) |
-| MicroDiT_XL_2 trained on 37M images (22M real, 15 synthetic) | Ostris-VAE (16 channel) | 13.04 | 0.40 | [link](https://huggingface.co/VSehwag24/MicroDiT/resolve/main/ckpts/dit_16_channel_37M_real_and_synthetic_data.pt?download=true) |
-| MicroDiT_XL_2 trained on 490M synthetic images | SDXL-VAE (4 channel) | 13.26 | **0.52** | [link](https://huggingface.co/VSehwag24/MicroDiT/resolve/main/ckpts/dit_4_channel_0.5B_synthetic_data.pt?download=true) |
+| MicroDiT_XL_2 trained on 22M real images  | SDXL-VAE (4 channel) | 12.72 | 0.46 | [link](https://huggingface.co/VSehwag24/MicroDiT/resolve/main/ckpts/dit_4_channel_22M_real_only_data.pt) |
+| MicroDiT_XL_2 trained on 37M images (22M real, 15 synthetic) | SDXL-VAE (4 channel) | **12.66** | 0.46 | [link](https://huggingface.co/VSehwag24/MicroDiT/resolve/main/ckpts/dit_4_channel_37M_real_and_synthetic_data.pt) |
+| MicroDiT_XL_2 trained on 37M images (22M real, 15 synthetic) | Ostris-VAE (16 channel) | 13.04 | 0.40 | [link](https://huggingface.co/VSehwag24/MicroDiT/resolve/main/ckpts/dit_16_channel_37M_real_and_synthetic_data.pt) |
+| MicroDiT_XL_2 trained on 490M synthetic images | SDXL-VAE (4 channel) | 13.26 | **0.52** | [link](https://huggingface.co/VSehwag24/MicroDiT/resolve/main/ckpts/dit_4_channel_0.5B_synthetic_data.pt) |
 
-All four models are trained with nearly identical training configurations and computational budgets. 
+All four models are trained with nearly identical training configurations and computational budgets.
 
 
 ## Sampling
@@ -68,7 +68,7 @@ Use the following straightforward steps to generate images from the final model 
 ```python
 from micro_diffusion.models.model import create_latent_diffusion
 model = create_latent_diffusion(latent_res=64, in_channels=4, pos_interp_scale=2.0).to('cuda')
-model.load_state_dict(torch.load(final_ckpt_path_on_local_disk))
+model.dit.load_state_dict(torch.load(final_ckpt_path_on_local_disk)) # use model.load_state_dict if ckpt includes vae and text-encoder
 gen_images = model.generate(prompt=['An elegant squirrel pirate on a ship']*4, num_inference_steps=30, 
                                     guidance_scale=5.0, seed=2024)
 ```
