@@ -56,8 +56,8 @@ We release four pre-trained models ([HF](https://huggingface.co/VSehwag24/MicroD
 | Model Description | VAE (channels) | FID  | GenEval Score | Download |
 |------------------|-----|:------: |:------:|:---------------:|
 | MicroDiT_XL_2 trained on 22M real images  | SDXL-VAE (4 channel) | 12.72 | 0.46 | [link](https://huggingface.co/VSehwag24/MicroDiT/resolve/main/ckpts/dit_4_channel_22M_real_only_data.pt) |
-| MicroDiT_XL_2 trained on 37M images (22M real, 15 synthetic) | SDXL-VAE (4 channel) | **12.66** | 0.46 | [link](https://huggingface.co/VSehwag24/MicroDiT/resolve/main/ckpts/dit_4_channel_37M_real_and_synthetic_data.pt) |
-| MicroDiT_XL_2 trained on 37M images (22M real, 15 synthetic) | Ostris-VAE (16 channel) | 13.04 | 0.40 | [link](https://huggingface.co/VSehwag24/MicroDiT/resolve/main/ckpts/dit_16_channel_37M_real_and_synthetic_data.pt) |
+| MicroDiT_XL_2 trained on 37M images (22M real, 15M synthetic) | SDXL-VAE (4 channel) | **12.66** | 0.46 | [link](https://huggingface.co/VSehwag24/MicroDiT/resolve/main/ckpts/dit_4_channel_37M_real_and_synthetic_data.pt) |
+| MicroDiT_XL_2 trained on 37M images (22M real, 15M synthetic) | Ostris-VAE (16 channel) | 13.04 | 0.40 | [link](https://huggingface.co/VSehwag24/MicroDiT/resolve/main/ckpts/dit_16_channel_37M_real_and_synthetic_data.pt) |
 | MicroDiT_XL_2 trained on 490M synthetic images | SDXL-VAE (4 channel) | 13.26 | **0.52** | [link](https://huggingface.co/VSehwag24/MicroDiT/resolve/main/ckpts/dit_4_channel_0.5B_synthetic_data.pt) |
 
 All four models are trained with nearly identical training configurations and computational budgets.
