@@ -5,6 +5,8 @@ import numpy as np
 from timm.models.vision_transformer import PatchEmbed
 from typing import List
 
+from huggingface_hub import PyTorchModelHubMixin
+
 from .utils import (CaptionProjection, CrossAttention, Mlp, SelfAttention, T2IFinalLayer,
                    TimestepEmbedder, create_norm, get_2d_sincos_pos_embed, get_mask,
                    mask_out_token, modulate, unmask_tokens)
@@ -246,7 +248,7 @@ class DiTBlock(nn.Module):
         self.mlp.custom_init(self.weight_init_std)
     
 
-class DiT(nn.Module):
+class DiT(nn.Module, PyTorchModelHubMixin, repo_url="https://github.com/SonyResearch/micro_diffusion", pipeline_tag="text-to-image", license="apache-2.0"):
     """
     Diffusion Transformer (DiT) model than support conditioning on caption embeddings for text-to-image generation.
     
