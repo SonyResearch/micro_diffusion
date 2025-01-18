@@ -65,7 +65,7 @@ class FeedForward(nn.Module):
     
     Args:
         dim (int): Input and output dimension
-        hidden_dim (int): Hidden dimension betwen the two linear layers
+        hidden_dim (int): Hidden dimension between the two linear layers
         multiple_of (int): Round hidden dimension up to nearest multiple of this value
         use_bias (bool): Whether to use bias terms in linear layers
     """
